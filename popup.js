@@ -6,14 +6,23 @@ const chartData = {
 
 async function fetchBinanceHistory() {
   try {
-    const response = await fetch('https://api.binance.com/api/v3/klines?symbol=BTCUSDT&interval=1m&limit=30');
+    const currency = document.getElementById('currency').value;
+    let response;
+    
+    // Busca o par correto baseado na moeda selecionada
+    if (currency === 'BRL') {
+      response = await fetch('https://api.binance.com/api/v3/klines?symbol=BTCBRL&interval=1m&limit=30');
+    } else {
+      response = await fetch('https://api.binance.com/api/v3/klines?symbol=BTCUSDT&interval=1m&limit=30');
+    }
+    
     const data = await response.json();
     
     // Limpa dados anteriores
     chartData.labels = [];
     chartData.prices = [];
     
-    // Processa os dados do Binance (cada item é um array com [timestamp, open, high, low, close, ...])
+    // Processa os dados do Binance
     data.forEach(candle => {
       const time = new Date(candle[0]).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
       const price = parseFloat(candle[4]); // usando o preço de fechamento
@@ -29,6 +38,7 @@ async function fetchBinanceHistory() {
 
 function updateChart() {
   const ctx = document.getElementById('priceChart').getContext('2d');
+  const currency = document.getElementById('currency').value;
   
   if (priceChart) {
     priceChart.destroy();
@@ -87,10 +97,12 @@ function updateChart() {
             },
             label: function(context) {
               let value = context.parsed.y;
-              if (value >= 1000) {
-                return `${(value/1000).toFixed(1)}k`;
-              }
-              return value.toFixed(2);
+              const symbol = currency === 'BRL' ? 'R$' : '$';
+              return `${symbol}${value.toLocaleString('en-US', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+                useGrouping: true
+              })}`;
             }
           }
         }
@@ -115,7 +127,12 @@ function updateChart() {
           ticks: {
             color: '#6b7f95',
             callback: function(value) {
-              return value >= 1000 ? `${(value/1000).toFixed(1)}k` : value;
+              const symbol = currency === 'BRL' ? 'R$' : '$';
+              return `${symbol}${value.toLocaleString('en-US', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+                useGrouping: true
+              })}`;
             },
             maxTicksLimit: 5
           }
@@ -147,11 +164,16 @@ function updatePriceData() {
       const currencyTypeElement = document.querySelector('.currency-type');
       
       // Atualiza o tipo de moeda
-      currencyTypeElement.textContent = data.currency || 'USD';
+      currencyTypeElement.textContent = data.currency || 'BRL';
       
-      // Formata o preço com o símbolo da moeda
+      // Formata o preço com o símbolo da moeda e todas as casas decimais
       const symbol = data.currency === 'BRL' ? 'R$' : '$';
-      priceElement.textContent = `${symbol}${parseFloat(data.currentPrice.replace(/[^0-9.-]+/g, '')).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+      const numericValue = parseFloat(data.currentPrice.replace(/[^0-9.-]+/g, ''));
+      priceElement.textContent = `${symbol}${numericValue.toLocaleString('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+        useGrouping: true
+      })}`;
       
       // Atualiza a variação
       changeElement.textContent = data.priceChange;

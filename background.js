@@ -36,9 +36,14 @@ async function fetchPrice() {
             price = price / usdtPrice;
         }
         
-        currentPrice = formatCompactNumber(price);
+        // Não formata com K, mantém o valor completo
+        currentPrice = price.toLocaleString('en-US', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+            useGrouping: true
+        });
         
-        chrome.action.setBadgeText({ text: currentPrice });
+        chrome.action.setBadgeText({ text: formatCompactNumber(price) }); // Mantém o badge compacto
         chrome.action.setBadgeBackgroundColor({ color: '#000' });
         
         const priceChange = calculatePriceChange(price, previousPrice);
