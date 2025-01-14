@@ -44,7 +44,11 @@ function updateChart() {
         borderWidth: 2,
         fill: false,
         tension: 0.4,
-        pointRadius: 0
+        pointRadius: 0,
+        pointHoverRadius: 6,
+        pointHoverBackgroundColor: '#3772FF',
+        pointHoverBorderColor: '#fff',
+        pointHoverBorderWidth: 2
       }]
     },
     options: {
@@ -58,9 +62,37 @@ function updateChart() {
           bottom: 0
         }
       },
+      interaction: {
+        intersect: false,
+        mode: 'index'
+      },
       plugins: {
         legend: {
           display: false
+        },
+        tooltip: {
+          enabled: true,
+          mode: 'index',
+          intersect: false,
+          backgroundColor: '#1a2632',
+          titleColor: '#6b7f95',
+          bodyColor: '#fff',
+          borderColor: '#2c3b4a',
+          borderWidth: 1,
+          padding: 10,
+          displayColors: false,
+          callbacks: {
+            title: function(tooltipItems) {
+              return tooltipItems[0].label;
+            },
+            label: function(context) {
+              let value = context.parsed.y;
+              if (value >= 1000) {
+                return `${(value/1000).toFixed(1)}k`;
+              }
+              return value.toFixed(2);
+            }
+          }
         }
       },
       scales: {
@@ -89,7 +121,14 @@ function updateChart() {
           }
         }
       },
-      animation: false
+      animation: false,
+      onHover: (event, elements) => {
+        if (elements && elements.length) {
+          event.native.target.style.cursor = 'pointer';
+        } else {
+          event.native.target.style.cursor = 'default';
+        }
+      }
     }
   });
 }
@@ -101,13 +140,49 @@ document.getElementById('currency').addEventListener('change', (e) => {
 });
 
 function updatePriceData() {
-  chrome.storage.local.get(['currentPrice', 'priceChange'], (data) => {
+  chrome.storage.local.get(['currentPrice', 'priceChange', 'currency'], (data) => {
     if (data.currentPrice) {
-      document.getElementById('price').textContent = data.currentPrice;
-      document.getElementById('price-change').textContent = data.priceChange;
+      const priceElement = document.getElementById('price');
+      const changeElement = document.getElementById('price-change');
+      const currencyTypeElement = document.querySelector('.currency-type');
+      
+      // Atualiza o tipo de moeda
+      currencyTypeElement.textContent = data.currency || 'USD';
+      
+      // Formata o preço com o símbolo da moeda
+      const symbol = data.currency === 'BRL' ? 'R$' : '$';
+      priceElement.textContent = `${symbol}${parseFloat(data.currentPrice.replace(/[^0-9.-]+/g, '')).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+      
+      // Atualiza a variação
+      changeElement.textContent = data.priceChange;
+      
+      // Adiciona classes para cores da variação
+      if (data.priceChange.startsWith('+')) {
+        changeElement.className = 'positive';
+      } else if (data.priceChange.startsWith('-')) {
+        changeElement.className = 'negative';
+      }
     }
   });
 }
+
+// Efeito de hover no gráfico
+document.addEventListener('DOMContentLoaded', () => {
+  const chartContainer = document.querySelector('.chart-container');
+  
+  chartContainer.addEventListener('mousemove', (e) => {
+    const rect = chartContainer.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    
+    // Efeito de brilho que segue o cursor
+    chartContainer.style.background = `radial-gradient(circle at ${x}px ${y}px, #3d4e5f, #2c3b4a)`;
+  });
+  
+  chartContainer.addEventListener('mouseleave', () => {
+    chartContainer.style.background = '#2c3b4a';
+  });
+});
 
 // Inicialização
 chrome.storage.local.get('currency', (data) => {

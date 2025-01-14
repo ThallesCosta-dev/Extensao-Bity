@@ -9,6 +9,7 @@ body {
 .container {
   width: 350px;
   padding: 15px;
+  animation: fadeIn 0.3s ease-in;
 }
 
 .header {
@@ -16,6 +17,8 @@ body {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 15px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #2c3b4a;
 }
 
 .title {
@@ -24,40 +27,135 @@ body {
   gap: 8px;
 }
 
-.title img {
-  width: 24px;
-  height: 24px;
+.bitcoin-logo {
+  width: 32px;
+  height: 32px;
+  margin-right: 8px;
 }
 
-select {
-  background-color: #2c3b4a;
+.title span {
+  font-size: 20px;
+  font-weight: 500;
   color: white;
-  border: none;
-  padding: 5px 10px;
-  border-radius: 4px;
 }
 
-.price-info {
-  margin-bottom: 20px;
+.currency-label {
+  font-size: 16px;
+  margin-bottom: 8px;
+}
+
+.currency-type {
+  color: #00ff00;
+  font-weight: 500;
+}
+
+.price-details {
+  font-size: 14px;
+  line-height: 1.5;
 }
 
 #price {
-  font-size: 24px;
+  font-size: 16px;
   font-weight: bold;
+  color: white;
 }
 
 #price-change {
-  color: #00ff00;
+  margin-left: 8px;
   font-size: 14px;
+  font-weight: 500;
+}
+
+#price-change.positive {
+  color: #00ff00;
+}
+
+#price-change.negative {
+  color: #ff4444;
 }
 
 .chart-container {
   height: 200px;
   width: 100%;
   position: relative;
+  background: #2c3b4a;
+  border-radius: 8px;
+  padding: 15px;
+  box-sizing: border-box;
+  transition: all 0.3s ease;
+}
+
+.chart-container:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
 }
 
 canvas {
   width: 100% !important;
   height: 100% !important;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Efeito de pulso quando atualiza o preço */
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.pulse {
+  animation: pulse 0.3s ease-in-out;
+}
+
+.bitcoin-logo {
+  width: 24px;
+  height: 24px;
+  margin-right: 8px;
+}
+
+.bitcoin-logo:hover {
+  animation-duration: 2s;
+}
+
+.currency-select {
+  background-color: transparent;
+  color: white;
+  border: 1px solid #2c3b4a;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.currency-select:hover {
+  border-color: #3d4e5f;
+}
+
+.currency-select option {
+  background-color: #1a2632;
 } 
