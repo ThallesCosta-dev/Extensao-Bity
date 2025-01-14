@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="popup.css">
+  <script src="chart.js"></script>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="title">
+        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAApgAAAKYB3X3/OAAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAANCSURBVEiJtZZPbFN1GMY/39tCGes6KQwmO2yQYckQnc0SBxk0QUNigmQkJIaa6MWDGg0eOBDjxZMXb8ajQUNIICEkRG4eJJIYEkNwHhbHBgwhcZvIGLDRrV3Xrn37eGjpn3Xt1g0fT/X93uf3Pm/f7/2+7yvFIwYAz/NGgPeBl4EXgOeBZ4AUkABmgX+ASeAi8DPwkxDC/l8GnudtAT4G3gMeW6e8ClwCjgshzj0S4HneTuAr4Ol1SNfSX8AwcEoIUajrDTzP6wc+rQe7j3QgBZxrWUfXdYQQZ4F3gMXHBQCklLKtBgDY1nXdBk4Bex8XUCPFdd0GQNM0XNe9AAwAhUcAIKWUbY7jhOLxOEKIS0KIfQD6ak/TNNvzvL3AMHBeiPpxXNelWCwSiUTQNI1cLgfwp+u6PaqqzgshrkspZTgcvqUoygQwrigK+XyeYDCI4ziEQiGklPi+T6FQwLZtTNMkEAhQKpVQVZVIJEI2m0XXdeLxONlsFsMwMAyDUqlEIBAgGo1iWRbBYJBEIoGu6wSDQXK5HMFgkEgkQj6fR9M0EokEpmliGAaJRALf98nn8/i+TzKZxPd9TNOkXC4TCoWwLAtd14nFYhSLRSzLIhwOk06nMQyDVCpFuVzGsixUVSWdTmMYBslkknK5jGVZaJpGOp3GNE0SiQTlchnLstA0jXQ6jWEYJJNJKpUKlmWhqirpdBrDMIjH4/i+j2VZqKrKnj17mJubY3p6mlwuh6qqzM/P43kesViMYDDI4uIiUkri8TiKopDP5wkEAkSjUbLZLIZhkEqlWFpaQtd1YrEYCwsLGIZBMpnE932y2SyBQIBoNEomk8EwDFKpFL7vk8vlCAQCRKNRMpkMhmGQSqXwfZ9cLoeu68RiMRYWFjAMg2QySTqdZnJykkwmQyaTYXFxEcuyiEajLC0toes6sViMQCBALpfD931isRiKopDP5wkEAkSjUbLZLIZhkEqlWF5eRtd1YrEY8/PzGIZBKpXC932y2SyBQIBoNEomk8EwDFKpFL7vk8vlCAQCxGIxMpkMhmGQSqXwfZ+5OXRN05BSyu3AO8DrwCvAVmATsAAY1b9rwK/Az0KI3wEURVkBjgJHhBDXAP4F3AGRz/dRvvoAAAAASUVORK5CYII=" alt="Bitcoin">
+        <span>Bitcoin</span>
+      </div>
+      <select id="currency">
+        <option value="BRL">BRL</option>
+        <option value="USD">USD</option>
+      </select>
+    </div>
+    <div class="price-info">
+      <div id="price"></div>
+      <div id="price-change"></div>
+    </div>
+    <div class="chart-container">
+      <canvas id="priceChart"></canvas>
+    </div>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html> 

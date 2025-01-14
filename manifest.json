@@ -1,0 +1,25 @@
+{
+  "manifest_version": 3,
+  "name": "Bitcoin Bity Price",
+  "version": "1.0",
+  "description": "Mostra a cotação do Bitcoin da Bity direto na barra de ferramentas",
+  "permissions": ["storage"],
+  "host_permissions": [
+    "https://api.binance.com/"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "48": "icon48.png"
+    }
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "icons": {
+    "48": "icon48.png"
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
+  }
+} 
