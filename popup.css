@@ -49,9 +49,15 @@ body {
   font-weight: 500;
 }
 
+.price-info {
+  margin-top: -6px;
+}
+
 .price-details {
   font-size: 14px;
   line-height: 1.5;
+  margin-top: -9px;
+  margin-bottom: 15px;
 }
 
 #price {
