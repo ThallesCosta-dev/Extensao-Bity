@@ -1,6 +1,7 @@
 let currentPrice = '';
 let currentCurrency = 'BRL';
 let previousPrice = null;
+let bitcoinAmount = 0;
 
 function formatCompactNumber(number) {
     number = Math.round(number);
@@ -36,6 +37,9 @@ async function fetchPrice() {
             price = price / usdtPrice;
         }
         
+        // Calcula o valor total em BTC
+        const totalValue = bitcoinAmount * price;
+        
         // Não formata com K, mantém o valor completo
         currentPrice = price.toLocaleString('en-US', {
             minimumFractionDigits: 2,
@@ -52,7 +56,12 @@ async function fetchPrice() {
         chrome.storage.local.set({
             currentPrice,
             priceChange,
-            timestamp: Date.now()
+            timestamp: Date.now(),
+            totalValue: totalValue.toLocaleString('en-US', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+                useGrouping: true
+            })
         });
         
         setTimeout(fetchPrice, 10000);
@@ -66,6 +75,10 @@ chrome.storage.onChanged.addListener((changes) => {
     if (changes.currency) {
         currentCurrency = changes.currency.newValue;
         previousPrice = null;
+        fetchPrice();
+    }
+    if (changes.bitcoinAmount) {
+        bitcoinAmount = Number(changes.bitcoinAmount.newValue);
         fetchPrice();
     }
 });

@@ -4,6 +4,8 @@ const chartData = {
   prices: []
 };
 
+let currentCurrency = 'BRL'; // Adicionando a variável
+
 async function fetchBinanceHistory() {
   try {
     const currency = document.getElementById('currency').value;
@@ -219,3 +221,47 @@ setInterval(() => {
   updatePriceData();
   fetchBinanceHistory();
 }, 10000);
+
+document.getElementById('btc-amount').addEventListener('input', (e) => {
+    const amount = parseFloat(e.target.value) || 0;
+    chrome.storage.local.set({ bitcoinAmount: amount });
+});
+
+// Carregar valores salvos quando o popup abrir
+chrome.storage.local.get(['currency', 'bitcoinAmount', 'totalValue', 'currentPrice'], (result) => {
+    if (result.currency) {
+        currentCurrency = result.currency;
+    }
+    if (result.bitcoinAmount) {
+        document.getElementById('btc-amount').value = result.bitcoinAmount;
+        
+        // Exibir o valor total imediatamente se existir
+        if (result.totalValue) {
+            const totalValueElement = document.getElementById('total-value');
+            const currency = currentCurrency === 'USD' ? '$' : 'R$';
+            totalValueElement.innerHTML = `
+                <div>Seu saldo em ${currentCurrency}</div>
+                <div class="price-main">${result.bitcoinAmount} Bitcoin${result.bitcoinAmount > 1 ? 's são' : ' é'} igual a ${currency} ${result.totalValue}</div>
+            `;
+        }
+    }
+});
+
+chrome.storage.local.onChanged.addListener((changes) => {
+    if (changes.currency) {
+        currentCurrency = changes.currency.newValue;
+    }
+    
+    if (changes.totalValue || changes.bitcoinAmount) {
+        const totalValueElement = document.getElementById('total-value');
+        const currency = currentCurrency === 'USD' ? '$' : 'R$';
+        const bitcoinAmount = document.getElementById('btc-amount').value;
+        
+        if (bitcoinAmount && bitcoinAmount > 0) {
+            totalValueElement.innerHTML = `
+                <div>Seu saldo em ${currentCurrency}</div>
+                <div class="price-main">${bitcoinAmount} Bitcoin${bitcoinAmount > 1 ? 's são' : ' é'} igual a ${currency} ${changes.totalValue ? changes.totalValue.newValue : changes.totalValue}</div>
+            `;
+        }
+    }
+});
