@@ -45,7 +45,7 @@ Uma extensão para o Google Chrome que permite acompanhar o preço do Bitcoin em
 
 ## Estrutura do projeto
 ```bash
-bitcoin-price-tracker/
+Extensao-Bity/
 ├── manifest.json
 ├── popup.html
 ├── popup.js
