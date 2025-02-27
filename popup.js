@@ -228,20 +228,27 @@ document.getElementById('btc-amount').addEventListener('input', (e) => {
 });
 
 // Carregar valores salvos quando o popup abrir
-chrome.storage.local.get(['currency', 'bitcoinAmount', 'totalValue', 'currentPrice'], (result) => {
+chrome.storage.local.get(['currency', 'bitcoinAmount', 'currentPrice'], (result) => {
     if (result.currency) {
         currentCurrency = result.currency;
     }
     if (result.bitcoinAmount) {
-        document.getElementById('btc-amount').value = result.bitcoinAmount;
+        const bitcoinAmount = parseFloat(result.bitcoinAmount);
+        document.getElementById('btc-amount').value = bitcoinAmount;
         
-        // Exibir o valor total imediatamente se existir
-        if (result.totalValue) {
+        if (bitcoinAmount > 0 && result.currentPrice) {
             const totalValueElement = document.getElementById('total-value');
             const currency = currentCurrency === 'USD' ? '$' : 'R$';
+            const currentPrice = parseFloat(result.currentPrice.replace(/[^0-9.-]+/g, ''));
+            const totalValue = (bitcoinAmount * currentPrice).toLocaleString('en-US', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+                useGrouping: true
+            });
+            
             totalValueElement.innerHTML = `
-                <div>Seu saldo em ${currentCurrency}</div>
-                <div class="price-main">${result.bitcoinAmount} Bitcoin${result.bitcoinAmount > 1 ? 's são' : ' é'} igual a ${currency} ${result.totalValue}</div>
+                <div class="price-label">Seu saldo em ${currentCurrency}</div>
+                <div class="price-main">${bitcoinAmount} Bitcoin${bitcoinAmount > 1 ? 's são' : ' é'} igual a ${currency} ${totalValue}</div>
             `;
         }
     }
@@ -252,16 +259,25 @@ chrome.storage.local.onChanged.addListener((changes) => {
         currentCurrency = changes.currency.newValue;
     }
     
-    if (changes.totalValue || changes.bitcoinAmount) {
+    if (changes.totalValue || changes.bitcoinAmount || changes.currentPrice) {
         const totalValueElement = document.getElementById('total-value');
         const currency = currentCurrency === 'USD' ? '$' : 'R$';
-        const bitcoinAmount = document.getElementById('btc-amount').value;
+        const bitcoinAmount = parseFloat(document.getElementById('btc-amount').value) || 0;
         
-        if (bitcoinAmount && bitcoinAmount > 0) {
+        if (bitcoinAmount > 0) {
+            const currentPrice = parseFloat(changes.currentPrice?.newValue?.replace(/[^0-9.-]+/g, '') || 0);
+            const totalValue = (bitcoinAmount * currentPrice).toLocaleString('en-US', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+                useGrouping: true
+            });
+            
             totalValueElement.innerHTML = `
-                <div>Seu saldo em ${currentCurrency}</div>
-                <div class="price-main">${bitcoinAmount} Bitcoin${bitcoinAmount > 1 ? 's são' : ' é'} igual a ${currency} ${changes.totalValue ? changes.totalValue.newValue : changes.totalValue}</div>
+                <div class="price-label">Seu saldo em ${currentCurrency}</div>
+                <div class="price-main">${bitcoinAmount} Bitcoin${bitcoinAmount > 1 ? 's são' : ' é'} igual a ${currency} ${totalValue}</div>
             `;
+        } else {
+            totalValueElement.innerHTML = '';
         }
     }
 });
