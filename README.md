@@ -53,7 +53,7 @@ bitcoin-price-tracker/
 ├── background.js
 └── assets/
 └── icons/
-´´´
+```
 ## APIs utilizadas
 
 - Binance API
